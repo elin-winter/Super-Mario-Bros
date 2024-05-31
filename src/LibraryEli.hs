@@ -98,7 +98,7 @@ comprarHerramienta plomero herramienta
 
 comprar :: Plomero -> Herramienta -> Plomero
 comprar herramienta = 
-    (flip agregarAPlomero cajaHeramientas herramienta) . modificarDinero (negate . precio herramienta)
+    agregarAPlomero herramienta cajaHeramientas . modificarDinero (negate . precio herramienta)
 
 agregarAPlomero :: Plomero -> a -> (Plomero -> [a]) -> Plomero
 agregarAPlomero plomero elemento prop = 
@@ -138,7 +138,7 @@ puedeHacerReparacion :: Plomero -> Reparacion -> Bool
 puedeHacerReparacion plomero reparacion = cumpleRequerimiento plomero reparacion || esMalvadoConMartillo plomero
 
 cumpleRequerimiento :: Plomero -> Reparacion -> Bool
-cumpleRequerimiento plomero reparacion = (requerimiento reparacion) plomero
+cumpleRequerimiento plomero reparacion = requerimiento reparacion plomero
 
 esMalvadoConMartillo :: Plomero -> Bool
 esMalvadoConMartillo plomero = esMalvado plomero && herramientaEspecifica "Martillo"
@@ -171,7 +171,7 @@ afectarPlomero reparaciones plomero = foldl hacerReparacion plomero reparaciones
 
 -- Funcion 11
 masReparador :: Criterio
-masReparador reparaciones plomeros = compararPlomeros historialReparaciones reparaciones plomeros 
+masReparador = compararPlomeros historialReparaciones 
 
 compararPlomeros :: (Plomero -> Number) -> Criterio
 compararPlomeros reparaciones plomeros = elegirUno (plomerosTrabajan reparaciones plomeros)
@@ -186,15 +186,15 @@ compararProp :: Plomero -> Plomero -> (Plomero -> Number) -> Bool
 compararProp p1 p2 prop = prop p1 >= prop p2
 
 plomerosTrabajan :: JornadaDeTrabajo -> [Plomero] -> [Plomero]
-plomerosTrabajan reparaciones plomeros = map (afectaPlomero reparaciones) plomeros
+plomerosTrabajan reparaciones = map (afectaPlomero reparaciones)
 
 -- Funcion 12
 masAdinerado :: Criterio
-masAdinerado reparaciones plomeros = compararPlomeros dinero reparaciones plomeros 
+masAdinerado = compararPlomeros dinero 
 
 -- Funcion 12
 invirtioMas :: Criterio
-invirtioMas reparaciones plomeros = compararPlomeros sumaDineroHerramientas reparaciones plomeros
+invirtioMas = compararPlomeros sumaDineroHerramientas
 
 sumaDineroHerramientas :: Plomero -> Number
-sumaDineroHerramientas = (sum . map precio) $ cajaHeramientas 
+sumaDineroHerramientas = (sum . map precio) cajaHeramientas 
